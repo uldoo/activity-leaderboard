@@ -1,5 +1,5 @@
 export const KST_TIME_ZONE = 'Asia/Seoul';
-export const SEASON_START_DATE = '2026-06-20';
+export const SEASON_START_DATE = '2026-06-01';
 export const SEASON_END_DATE = '2026-12-20';
 
 const dateFormatter = new Intl.DateTimeFormat('ko-KR', {
