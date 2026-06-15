@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Crown, Medal, Trophy } from 'lucide-react';
 import { formatKoreanDate } from '../lib/date';
 import { getMonthlyLeaderboard, RANK_RULES, type MemberScore } from '../lib/scoring';
@@ -87,6 +88,13 @@ function ScoreRow({ entry, mode }: { entry: MemberScore; mode: 'season' | 'month
 export function Leaderboard({ scores, monthLabel }: LeaderboardProps) {
   const monthlyScores = getMonthlyLeaderboard(scores);
   const topThree = scores.slice(0, 3);
+  const [mobileTab, setMobileTab] = useState<'season' | 'month'>('season');
+
+  const mobileTabClass = (active: boolean) =>
+    [
+      'inline-flex h-11 items-center justify-center gap-2 rounded-xl text-sm font-black transition',
+      active ? 'bg-white text-black' : 'border border-white/10 bg-zinc-950 text-zinc-400',
+    ].join(' ');
 
   return (
     <div className="space-y-6">
@@ -108,31 +116,44 @@ export function Leaderboard({ scores, monthLabel }: LeaderboardProps) {
         )}
       </section>
 
-      <section className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Medal className="h-5 w-5 text-yellow-200" aria-hidden="true" />
-            <h2 className="text-xl font-black text-white">전체 랭킹</h2>
-          </div>
-          {scores.map((entry) => (
-            <ScoreRow key={entry.member.id} entry={entry} mode="season" />
-          ))}
+      <section>
+        <div className="mb-3 grid grid-cols-2 gap-2 lg:hidden">
+          <button type="button" onClick={() => setMobileTab('season')} className={mobileTabClass(mobileTab === 'season')}>
+            <Medal className="h-4 w-4" aria-hidden="true" />
+            전체 랭킹
+          </button>
+          <button type="button" onClick={() => setMobileTab('month')} className={mobileTabClass(mobileTab === 'month')}>
+            <Medal className="h-4 w-4" aria-hidden="true" />
+            {monthLabel}
+          </button>
         </div>
 
-        <div className="space-y-3">
-          <div className="flex items-center gap-2">
-            <Medal className="h-5 w-5 text-zinc-200" aria-hidden="true" />
-            <h2 className="text-xl font-black text-white">{monthLabel} 랭킹</h2>
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className={[mobileTab === 'season' ? 'block' : 'hidden', 'space-y-3 lg:block'].join(' ')}>
+            <div className="hidden items-center gap-2 lg:flex">
+              <Medal className="h-5 w-5 text-yellow-200" aria-hidden="true" />
+              <h2 className="text-xl font-black text-white">전체 랭킹</h2>
+            </div>
+            {scores.map((entry) => (
+              <ScoreRow key={entry.member.id} entry={entry} mode="season" />
+            ))}
           </div>
-          {monthlyScores.map((entry) => (
-            <ScoreRow key={entry.member.id} entry={entry} mode="month" />
-          ))}
+
+          <div className={[mobileTab === 'month' ? 'block' : 'hidden', 'space-y-3 lg:block'].join(' ')}>
+            <div className="hidden items-center gap-2 lg:flex">
+              <Medal className="h-5 w-5 text-zinc-200" aria-hidden="true" />
+              <h2 className="text-xl font-black text-white">{monthLabel} 랭킹</h2>
+            </div>
+            {monthlyScores.map((entry) => (
+              <ScoreRow key={entry.member.id} entry={entry} mode="month" />
+            ))}
+          </div>
         </div>
       </section>
 
       <section className="rounded-2xl border border-white/10 bg-zinc-950 p-4">
         <h2 className="text-lg font-black text-white">랭크 기준표</h2>
-        <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-2 lg:grid-cols-4">
           {RANK_RULES.map((rank) => (
             <div key={rank.name} className="rounded-xl border border-white/10 bg-black px-3 py-3">
               <div className="flex items-center justify-between gap-2">

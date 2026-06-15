@@ -88,16 +88,16 @@ export function Home() {
 
   return (
     <Layout wide>
-      <div className="space-y-6">
-        <section className="rounded-3xl border border-white/10 bg-zinc-950 p-5 shadow-[0_24px_80px_rgba(0,0,0,0.5)] sm:p-8">
+      <div className="space-y-4 sm:space-y-6">
+        <section className="rounded-3xl border border-white/10 bg-zinc-950 p-4 shadow-[0_24px_80px_rgba(0,0,0,0.5)] sm:p-8">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-yellow-400/30 bg-yellow-400/10 px-3 py-1.5 text-xs font-black text-yellow-200">
                 <Signal className="h-4 w-4" aria-hidden="true" />
                 LIVE LEADERBOARD
               </div>
-              <h1 className="text-4xl font-black tracking-normal text-white sm:text-5xl">인류애 랭킹 보드</h1>
-              <p className="mt-3 max-w-2xl text-sm font-semibold leading-6 text-zinc-400 sm:text-base">
+              <h1 className="text-3xl font-black tracking-normal text-white sm:text-5xl">인류애 랭킹 보드</h1>
+              <p className="mt-3 hidden max-w-2xl text-sm font-semibold leading-6 text-zinc-400 sm:block sm:text-base">
                 시즌 누적 점수와 {monthBounds.label} 점수를 한눈에 확인하는 단톡방 리더보드입니다.
               </p>
             </div>
