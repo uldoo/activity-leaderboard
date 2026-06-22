@@ -1,6 +1,6 @@
 import { Crown, Hash, ListChecks, Trophy, Users } from 'lucide-react';
 import { getCurrentMonthBounds } from '../lib/date';
-import { getMemberScores, getMonthlyLeaderboard, getRecentActivities } from '../lib/scoring';
+import { getMemberScores, getMonthlyLeaderboard, getRecentActivities, getSeasonActivities } from '../lib/scoring';
 import type { Activity, Member } from '../types/database';
 import { RecentActivities } from './RecentActivities';
 
@@ -44,16 +44,17 @@ function StatCard({
 }
 
 export function AdminDashboard({ members, activities }: AdminDashboardProps) {
+  const seasonActivities = getSeasonActivities(activities);
   const scores = getMemberScores(members, activities);
   const monthlyScores = getMonthlyLeaderboard(scores);
   const monthBounds = getCurrentMonthBounds();
-  const monthActivities = activities.filter(
+  const monthActivities = seasonActivities.filter(
     (activity) =>
       activity.activity_date >= monthBounds.startDate && activity.activity_date < monthBounds.endDateExclusive,
   );
   const seasonTotal = scores.reduce((sum, entry) => sum + entry.seasonScore, 0);
   const monthTotal = monthActivities.reduce((sum, activity) => sum + activity.score, 0);
-  const recentActivities = getRecentActivities(activities, members, 10);
+  const recentActivities = getRecentActivities(seasonActivities, members, 10);
 
   return (
     <div className="space-y-6">
@@ -73,7 +74,7 @@ export function AdminDashboard({ members, activities }: AdminDashboardProps) {
         <StatCard
           label="시즌 총점"
           value={`${seasonTotal.toLocaleString()}점`}
-          detail={`${activities.length.toLocaleString()}개 누적 활동`}
+          detail={`${seasonActivities.length.toLocaleString()}개 누적 활동`}
           icon={ListChecks}
         />
         <StatCard

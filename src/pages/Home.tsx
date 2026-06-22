@@ -5,7 +5,7 @@ import { Layout } from '../components/Layout';
 import { RecentActivities } from '../components/RecentActivities';
 import { SeasonProgress } from '../components/SeasonProgress';
 import { getCurrentMonthBounds } from '../lib/date';
-import { getMemberScores, getRecentActivities } from '../lib/scoring';
+import { getMemberScores, getRecentActivities, getSeasonActivities } from '../lib/scoring';
 import { supabase, supabaseConfigError } from '../lib/supabase';
 import type { Activity, Member } from '../types/database';
 
@@ -84,7 +84,10 @@ export function Home() {
   }, [loadDashboard]);
 
   const scores = useMemo(() => getMemberScores(members, activities), [activities, members]);
-  const recentActivities = useMemo(() => getRecentActivities(activities, members, 10), [activities, members]);
+  const recentActivities = useMemo(
+    () => getRecentActivities(getSeasonActivities(activities), members, 10),
+    [activities, members],
+  );
 
   return (
     <Layout wide>

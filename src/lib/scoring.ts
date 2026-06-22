@@ -65,6 +65,10 @@ export function getActiveActivityRules(rules: ActivityRule[]): ActivityRule[] {
   return sortActivityRules(rules).filter((rule) => rule.is_active !== false);
 }
 
+export function getSeasonActivities(activities: Activity[]): Activity[] {
+  return activities.filter((activity) => isWithinSeason(activity.activity_date));
+}
+
 export function calculateRank(score: number): RankRule {
   return RANK_RULES.find((rank) => score >= rank.min && score <= rank.max) ?? RANK_RULES[0];
 }
@@ -128,7 +132,7 @@ export function getMemberScores(
   options: { includeInactive?: boolean } = {},
 ): MemberScore[] {
   const monthBounds = getCurrentMonthBounds(referenceDate);
-  const seasonActivities = activities.filter((activity) => isWithinSeason(activity.activity_date));
+  const seasonActivities = getSeasonActivities(activities);
 
   const scores = members
     .filter((member) => options.includeInactive || member.is_active !== false)
@@ -140,7 +144,8 @@ export function getMemberScores(
           activity.activity_date < monthBounds.endDateExclusive,
       );
       const recentActivity =
-        sortActivitiesByCreatedAt(activities.filter((activity) => activity.member_id === member.id))[0] ?? null;
+        sortActivitiesByCreatedAt(memberSeasonActivities.filter((activity) => activity.member_id === member.id))[0] ??
+        null;
       const seasonScore = scoreActivities(memberSeasonActivities);
 
       return {
@@ -189,5 +194,5 @@ export function getRecentActivities(
 }
 
 export function getMemberActivities(memberId: string, activities: Activity[]): Activity[] {
-  return sortActivitiesByCreatedAt(activities.filter((activity) => activity.member_id === memberId));
+  return sortActivitiesByCreatedAt(getSeasonActivities(activities).filter((activity) => activity.member_id === memberId));
 }
