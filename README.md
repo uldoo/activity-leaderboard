@@ -11,6 +11,7 @@ React, Vite, TypeScript, TailwindCSS, Supabase로 만든 단톡방 활동 지수
 - 활동 유형은 `activity_rules` 테이블에서 관리
 - 활동 저장 시 `activity_type`, `category`, `score`를 스냅샷으로 저장
 - 시즌 기간: 2026년 6월 20일 - 2026년 12월 31일
+- 점수 반영 기준: `created_at` 기준 2026년 6월 20일 이후 등록된 점수만 랭킹과 합계에 반영
 - Cloudflare Pages SPA 리다이렉트 포함: `public/_redirects`
 
 ## 설치 방법

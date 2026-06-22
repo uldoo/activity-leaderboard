@@ -1,4 +1,4 @@
-import { getCurrentMonthBounds, isWithinSeason } from './date';
+import { getCurrentMonthBounds, getKstDateInput, isWithinSeason } from './date';
 import type { Activity, ActivityRule, ActivityWithMember, Member } from '../types/database';
 
 export type DefaultActivityRule = {
@@ -66,7 +66,14 @@ export function getActiveActivityRules(rules: ActivityRule[]): ActivityRule[] {
 }
 
 export function getSeasonActivities(activities: Activity[]): Activity[] {
-  return activities.filter((activity) => isWithinSeason(activity.activity_date));
+  return activities.filter((activity) => {
+    const scoreGrantedDate = getScoreGrantedDate(activity);
+    return isWithinSeason(scoreGrantedDate);
+  });
+}
+
+function getScoreGrantedDate(activity: Activity): string {
+  return getKstDateInput(activity.created_at) ?? activity.activity_date;
 }
 
 export function calculateRank(score: number): RankRule {
@@ -139,9 +146,10 @@ export function getMemberScores(
     .map<MemberScore>((member) => {
       const memberSeasonActivities = seasonActivities.filter((activity) => activity.member_id === member.id);
       const memberMonthActivities = memberSeasonActivities.filter(
-        (activity) =>
-          activity.activity_date >= monthBounds.startDate &&
-          activity.activity_date < monthBounds.endDateExclusive,
+        (activity) => {
+          const scoreGrantedDate = getScoreGrantedDate(activity);
+          return scoreGrantedDate >= monthBounds.startDate && scoreGrantedDate < monthBounds.endDateExclusive;
+        },
       );
       const recentActivity =
         sortActivitiesByCreatedAt(memberSeasonActivities.filter((activity) => activity.member_id === member.id))[0] ??

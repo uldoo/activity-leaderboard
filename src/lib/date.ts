@@ -52,6 +52,20 @@ export function getTodayDateInput(): string {
   return toDateInputString(year, month, day);
 }
 
+export function getKstDateInput(value?: string | null): string | null {
+  if (!value) {
+    return null;
+  }
+
+  const date = parseKstDate(value);
+  if (Number.isNaN(date.getTime())) {
+    return null;
+  }
+
+  const { year, month, day } = getKstDateParts(date);
+  return toDateInputString(year, month, day);
+}
+
 export function getCurrentMonthBounds(referenceDate = new Date()): {
   startDate: string;
   endDateExclusive: string;
